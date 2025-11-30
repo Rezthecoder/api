@@ -1,5 +1,4 @@
 //npm 
-
 // const express = require('express')
 
 import express from 'express'
@@ -17,7 +16,6 @@ app.get("/random", (req, res) => {
 
 })
 
-
 //filter joke by type
 
 app.get("/filter", (req, res) => { //query joke type Backend
@@ -34,7 +32,7 @@ app.get("/jokes/:id", (req, res) => {
     res.json(jokeFound)
 
 })
-
+console.log("sundayclass")
 
 //get all jokes
 
@@ -59,11 +57,103 @@ app.post("/jokes", (req, res) => {
     res.json(newJoke)
 })
 
+//put update
+
+app.put('/jokes/:id', (req, res) => { //1
+    const id = parseInt(req.params.id)
+    //     {
+    //     "id":"id",
+    //     "jokeText":"sandipsan le 20 crore magnu vayesi ma vagey",
+    //     "jokeType":"Paisa matters"
+    // }
+
+    const updatedJoke = {
+        id: id,  //1=="1" true
+        jokeText: req.body.jokeText,
+        jokeType: req.body.jokeType
+
+    }
+    const indexFound = programmingJokes.findIndex(
+        joke => joke.id === id
+    ) //0
+
+    // let indexFound = -1
+    // for (let i = 0; i < programmingJokes.length; i++) {
+    //     if (programmingJokes[i].id === id) {
+    //         //programmingjokes[i] =programmingjokes[0] = {
+    //         //     id: 1,
+    //         //     jokeText: 'Why was the JavaScript developer sad? Because he didn\'t Node how to Express himself.',
+    //         //     jokeType: 'Backend'
+    //         // }
+    //         indexFound = i
+    //         break
+
+    //     }
+    // }
+
+    // programmingJokes.forEach((joke, i) => {
+    //     if (joke.id === id) {
+    //         indexFound = i
+    //     }
+    // })
+
+
+
+    //programmingjokes[0] =//     {
+    //     "id":1,
+    //     "jokeText":"sandipsan le 20 crore magnu vayesi ma vagey",
+    //     "jokeType":"Paisa matters"
+    // }
+    programmingJokes[indexFound] = updatedJoke
+    console.log(programmingJokes)
+
+    res.json(updatedJoke)
+
+
+    // {
+    //     id: 1,
+    //     jokeText: 'Why was the JavaScript developer sad? Because he didn\'t Node how to Express himself.',
+    //     jokeType: 'Backend'
+    // },
+    //     "id":1,
+    //     "jokeText":"sandipsan le 20 crore magnu vayesi ma vagey",
+    //     "jokeType":"Paisa matters"
+    // }
+})
+
+
+app.patch('/jokes/:id', (req, res) => {
+    const id = parseInt(req.params.id)
+    const vakojoke = programmingJokes.find(joke => joke.id === id)
+    const updatedJoke = {
+        id: id,  //1=="1" true
+        jokeText: req.body.jokeText || vakojoke.jokeText, //or or if else
+        jokeType: req.body.jokeType || vakojoke.jokeType
+
+    }
+    const indexFound = programmingJokes.findIndex(
+        joke => joke.id === id
+    )
+    programmingJokes[indexFound] = updatedJoke
+    res.json(updatedJoke)
+    console.log(programmingJokes)
+})
+
+
+
+// //if(req.body.jokeText =='' && req.body.jokeText ===null){
+// vakojoke.jokeText
+// }
 
 
 app.listen(port, () => {
     console.log(`Example app listening on port http://localhost:${port}`)
 })
+
+//patch
+
+
+
 
 
 

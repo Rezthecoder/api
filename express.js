@@ -145,7 +145,51 @@ app.patch('/jokes/:id', (req, res) => {
 // //if(req.body.jokeText =='' && req.body.jokeText ===null){
 // vakojoke.jokeText
 // }
-//
+//delete by id
+app.delete('/jokes/:id', (req, res) => {  //1
+    //params linxu id lai int change garxu
+    const id = parseInt(req.params.id)
+    const jokeIndex = programmingJokes.findIndex(joke => joke.id === id) //0
+    if (jokeIndex > -1) {
+        programmingJokes.splice(jokeIndex, 1)
+        console.log(programmingJokes)
+        res.json({
+            message: `${id} is deleted successfully`
+        })
+    }
+    else {
+        res.status(400)
+            .json({ message: `${id} not found` })
+
+    }
+
+})
+
+const apiKey = 'hellos'
+
+//delete all 
+app.delete('/all', (req, res) => {  //1
+    const key = req.query.key
+    console.log(key)
+    if (key === apiKey) {
+        // console.log(key)
+        programmingJokes = []
+        res.status(200)
+            .json({
+                message: res.statusMessage
+            })
+    } else {
+        res.status(403).json({
+            message: 'not authorized'
+        })
+    }
+
+
+
+
+})
+
+
 
 
 app.listen(port, () => {
@@ -157,7 +201,7 @@ app.listen(port, () => {
  * Each joke has an id, jokeText, and jokeType.
  * Types include 'General', 'Frontend', 'Backend', 'Database', 'DevOps', 'Python', and 'Java'.
  */
-const programmingJokes = [
+let programmingJokes = [
     {
         id: 1,
         jokeText: 'Why was the JavaScript developer sad? Because he didn\'t Node how to Express himself.',

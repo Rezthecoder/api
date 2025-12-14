@@ -123,6 +123,7 @@ app.put('/jokes/:id', (req, res) => { //1
 
 
 app.patch('/jokes/:id', (req, res) => {
+    console.log(req.path)
     const id = parseInt(req.params.id)
     const vakojoke = programmingJokes.find(joke => joke.id === id)
     const updatedJoke = {
@@ -144,18 +145,12 @@ app.patch('/jokes/:id', (req, res) => {
 // //if(req.body.jokeText =='' && req.body.jokeText ===null){
 // vakojoke.jokeText
 // }
+//
 
 
 app.listen(port, () => {
     console.log(`Example app listening on port http://localhost:${port}`)
 })
-
-//patch
-
-
-
-
-
 
 /**
  * An array of 50 programming jokes focused on double meanings and puns.

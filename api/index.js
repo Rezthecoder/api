@@ -8,7 +8,11 @@ const app = express()
 const port = 3001
 
 
-app.use(bodyParser.urlencoded({ extended: true }))
+// app.use(bodyParser.urlencoded({ extended: true }))
+
+// 1) Parse JSON bodies
+app.use(express.json());
+
 //get a random joke
 
 app.get("/random", (req, res) => {

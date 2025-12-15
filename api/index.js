@@ -455,3 +455,5 @@ let programmingJokes = [
         jokeType: 'General'
     }
 ];
+
+export default app

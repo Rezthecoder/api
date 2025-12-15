@@ -3,22 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Create a Joke</title>
+    <title>Jokes Dashboard</title>
     <style>
       body {
         font-family: Arial, sans-serif;
-        margin: 40px;
+        margin: 20px;
         background: #f9f9f9;
       }
       h1 {
         color: #333;
       }
-      form {
+      section {
         background: #fff;
         padding: 20px;
+        margin-bottom: 20px;
         border-radius: 8px;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-        max-width: 400px;
       }
       input,
       select,
@@ -38,84 +38,165 @@
         background: #005bb5;
       }
       .result {
-        margin-top: 20px;
+        margin-top: 10px;
         padding: 10px;
         background: #e6f7ff;
         border: 1px solid #91d5ff;
         border-radius: 4px;
       }
+      .joke-list {
+        margin-top: 10px;
+      }
+      .joke-item {
+        padding: 8px;
+        border-bottom: 1px solid #ddd;
+      }
     </style>
   </head>
   <body>
-    <h1>Create a New Joke</h1>
-    <form id="jokeForm">
-      <label for="jokeText">Joke Text:</label>
-      <input
-        type="text"
-        id="jokeText"
-        name="jokeText"
-        placeholder="Enter your joke"
-        required
-      />
+    <h1>Jokes API Dashboard</h1>
 
-      <label for="jokeType">Joke Type:</label>
-      <select id="jokeType" name="jokeType" required>
-        <option value="">Select type</option>
-        <option value="General">General</option>
-        <option value="Frontend">Frontend</option>
-        <option value="Backend">Backend</option>
-        <option value="Database">Database</option>
-        <option value="Python">Python</option>
-        <option value="Java">Java</option>
-        <option value="DevOps">DevOps</option>
-      </select>
+    <!-- View All Jokes -->
+    <section>
+      <h2>View All Jokes</h2>
+      <button onclick="fetchJokes()">Load Jokes</button>
+      <div class="joke-list" id="jokeList"></div>
+    </section>
 
-      <button type="submit">Create Joke</button>
-    </form>
+    <!-- Create Joke -->
+    <section>
+      <h2>Create a Joke</h2>
+      <form id="createForm">
+        <input type="text" id="createText" placeholder="Joke text" required />
+        <select id="createType" required>
+          <option value="">Select type</option>
+          <option value="General">General</option>
+          <option value="Frontend">Frontend</option>
+          <option value="Backend">Backend</option>
+          <option value="Database">Database</option>
+          <option value="Python">Python</option>
+          <option value="Java">Java</option>
+          <option value="DevOps">DevOps</option>
+        </select>
+        <button type="submit">Create Joke</button>
+      </form>
+      <div class="result" id="createResult" style="display: none"></div>
+    </section>
 
-    <div class="result" id="result" style="display: none"></div>
+    <!-- Update Joke -->
+    <section>
+      <h2>Update a Joke</h2>
+      <form id="updateForm">
+        <input type="number" id="updateId" placeholder="Joke ID" required />
+        <input type="text" id="updateText" placeholder="New joke text" />
+        <input type="text" id="updateType" placeholder="New joke type" />
+        <button type="submit">Update Joke</button>
+      </form>
+      <div class="result" id="updateResult" style="display: none"></div>
+    </section>
+
+    <!-- Delete Joke -->
+    <section>
+      <h2>Delete a Joke</h2>
+      <form id="deleteForm">
+        <input type="number" id="deleteId" placeholder="Joke ID" required />
+        <button type="submit">Delete Joke</button>
+      </form>
+      <div class="result" id="deleteResult" style="display: none"></div>
+    </section>
 
     <script>
-      const form = document.getElementById("jokeForm");
-      const resultDiv = document.getElementById("result");
+      const API_BASE = "https://api-sigma-six-55.vercel.app"; // Change if needed
 
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const jokeText = document.getElementById("jokeText").value.trim();
-        const jokeType = document.getElementById("jokeType").value;
-
-        if (!jokeText || !jokeType) {
-          alert("Please fill in all fields.");
-          return;
-        }
-
+      // Fetch all jokes
+      async function fetchJokes() {
+        const list = document.getElementById("jokeList");
+        list.innerHTML = "Loading...";
         try {
-          const response = await fetch(
-            "https://api-1wg8o0gic-rezthecoders-projects.vercel.app/jokes",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                // If your project is protected, add:
-                // 'x-vercel-protection-bypass': '<YOUR_SECRET>',
-                // 'x-vercel-set-bypass-cookie': 'true'
-              },
-              body: JSON.stringify({ jokeText, jokeType }),
-            }
-          );
-
-          const data = await response.json();
-          resultDiv.style.display = "block";
-          resultDiv.textContent = response.ok
-            ? `✅ Joke created: ID ${data.id}, "${data.jokeText}" (${data.jokeType})`
-            : `❌ Error: ${data.error || "Unknown error"}`;
+          const res = await fetch(`${API_BASE}/jokes`);
+          const data = await res.json();
+          list.innerHTML = data
+            .map(
+              (j) =>
+                `<div class="joke-item">ID ${j.id}: ${j.jokeText} (${j.jokeType})</div>`
+            )
+            .join("");
         } catch (err) {
-          resultDiv.style.display = "block";
-          resultDiv.textContent = `❌ Request failed: ${err.message}`;
+          list.innerHTML = "Error loading jokes";
         }
-      });
+      }
+
+      // Create joke
+      document
+        .getElementById("createForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const jokeText = document.getElementById("createText").value.trim();
+          const jokeType = document.getElementById("createType").value;
+          const resultDiv = document.getElementById("createResult");
+          try {
+            const res = await fetch(`${API_BASE}/jokes`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ jokeText, jokeType }),
+            });
+            const data = await res.json();
+            resultDiv.style.display = "block";
+            resultDiv.textContent = res.ok
+              ? `✅ Created: ID ${data.id}`
+              : `❌ Error: ${data.error}`;
+          } catch (err) {
+            resultDiv.style.display = "block";
+            resultDiv.textContent = `❌ Request failed`;
+          }
+        });
+
+      // Update joke
+      document
+        .getElementById("updateForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const id = document.getElementById("updateId").value;
+          const jokeText = document.getElementById("updateText").value.trim();
+          const jokeType = document.getElementById("updateType").value.trim();
+          const resultDiv = document.getElementById("updateResult");
+          try {
+            const res = await fetch(`${API_BASE}/jokes/${id}`, {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ jokeText, jokeType }),
+            });
+            const data = await res.json();
+            resultDiv.style.display = "block";
+            resultDiv.textContent = res.ok
+              ? `✅ Updated: ID ${data.id}`
+              : `❌ Error: ${data.error}`;
+          } catch (err) {
+            resultDiv.style.display = "block";
+            resultDiv.textContent = `❌ Request failed`;
+          }
+        });
+
+      // Delete joke
+      document
+        .getElementById("deleteForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const id = document.getElementById("deleteId").value;
+          const resultDiv = document.getElementById("deleteResult");
+          try {
+            const res = await fetch(`${API_BASE}/jokes/${id}`, {
+              method: "DELETE",
+            });
+            resultDiv.style.display = "block";
+            resultDiv.textContent = res.ok
+              ? `✅ Deleted ID ${id}`
+              : `❌ Error deleting`;
+          } catch (err) {
+            resultDiv.style.display = "block";
+            resultDiv.textContent = `❌ Request failed`;
+          }
+        });
     </script>
   </body>
 </html>
-``

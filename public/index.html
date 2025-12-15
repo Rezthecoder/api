@@ -143,7 +143,7 @@
             const data = await res.json();
             resultDiv.style.display = "block";
             resultDiv.textContent = res.ok
-              ? `✅ Created: ID ${data.id}`
+              ? `✅ Created: ID ${data.id} jokeText: ${jokeText} jokeType:${jokeType}`
               : `❌ Error: ${data.error}`;
           } catch (err) {
             resultDiv.style.display = "block";

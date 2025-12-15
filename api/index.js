@@ -1,3 +1,7 @@
+import cors from 'cors'
+
+// Add this line after creating the app
+
 
 //npm 
 // const express = require('express')
@@ -12,7 +16,7 @@ const port = 3001
 
 // 1) Parse JSON bodies
 app.use(express.json());
-
+app.use(cors())
 //get a random joke
 
 app.get("/random", (req, res) => {
